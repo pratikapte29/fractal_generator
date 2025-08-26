@@ -19,6 +19,12 @@ from PIL import Image
 import time
 from fractals.mandelbrot import MandelbrotGenerator
 from fractals.julia import JuliaGenerator
+from fractals.barnsley_fern import BarnsleyFernGenerator
+from fractals.burning_ship import BurningShipGenerator
+from fractals.dragon_curve import DragonGenerator
+from fractals.koch_snowflake import KochSnowflakeGenerator
+from fractals.newton import NewtonGenerator
+from fractals.sierpinski import SierpinskiGenerator
 
 class TestPatternGenerator:
     """Simple test pattern for debugging"""
@@ -52,7 +58,7 @@ class FractalGenerator:
         self.generators = {
             'Mandelbrot Set': MandelbrotGenerator(),
             'Julia Set': JuliaGenerator(),
-            "Koch Snowflake": KochGenerator(),
+            "Koch Snowflake": KochSnowflakeGenerator(),
             "Sierpinski": SierpinskiGenerator(),
             "Dragon Curve": DragonGenerator(),
             "Barnsley Fern": BarnsleyFernGenerator(),
