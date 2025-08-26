@@ -22,7 +22,7 @@ from fractals.julia import JuliaGenerator
 from fractals.barnsley_fern import BarnsleyFernGenerator
 from fractals.burning_ship import BurningShipGenerator
 from fractals.dragon_curve import DragonGenerator
-from fractals.koch_snowflake import KochSnowflakeGenerator
+from fractals.koch_snowflake import KochGenerator
 from fractals.newton import NewtonGenerator
 from fractals.sierpinski import SierpinskiGenerator
 
@@ -58,7 +58,7 @@ class FractalGenerator:
         self.generators = {
             'Mandelbrot Set': MandelbrotGenerator(),
             'Julia Set': JuliaGenerator(),
-            "Koch Snowflake": KochSnowflakeGenerator(),
+            "Koch Snowflake": KochGenerator(),
             "Sierpinski": SierpinskiGenerator(),
             "Dragon Curve": DragonGenerator(),
             "Barnsley Fern": BarnsleyFernGenerator(),
@@ -312,6 +312,29 @@ class FractalGeneratorUI(QMainWindow):
         self.c_imag.setDecimals(5)
         self.c_imag.setSingleStep(0.001)
         julia_layout.addWidget(self.c_imag, 0, 3)
+
+        # Geometric parameters (for Koch snowflake)
+        self.geometric_group = QGroupBox("Geometric Parameters")
+        geometric_layout = QGridLayout(self.geometric_group)
+
+        geometric_layout.addWidget(QLabel("Depth:"), 0, 0)
+        self.depth = QSpinBox()
+        self.depth.setRange(1, 8)
+        self.depth.setValue(5)
+        geometric_layout.addWidget(self.depth, 0, 1)
+
+        geometric_layout.addWidget(QLabel("Size:"), 0, 2)
+        self.size = QDoubleSpinBox()
+        self.size.setRange(50.0, 500.0)
+        self.size.setValue(250.0)
+        self.size.setDecimals(1)
+        geometric_layout.addWidget(self.size, 0, 3)
+
+        geometric_layout.addWidget(QLabel("Line Width:"), 1, 0)
+        self.line_width = QSpinBox()
+        self.line_width.setRange(1, 5)
+        self.line_width.setValue(1)
+        geometric_layout.addWidget(self.line_width, 1, 1, 1, 3)
         
         # Display settings
         self.display_group = QGroupBox("Display Settings")
@@ -337,6 +360,7 @@ class FractalGeneratorUI(QMainWindow):
         # Add groups to layout
         layout.addWidget(self.complex_group)
         layout.addWidget(self.julia_group)
+        layout.addWidget(self.geometric_group)
         layout.addWidget(self.display_group)
         
         # Initially hide parameter groups
@@ -405,6 +429,7 @@ class FractalGeneratorUI(QMainWindow):
         """Hide all parameter groups"""
         self.complex_group.setVisible(False)
         self.julia_group.setVisible(False)
+        self.geometric_group.setVisible(False)
         self.display_group.setVisible(True)  # Always show display
     
     def show_parameters_for_fractal(self, fractal_type):
@@ -415,6 +440,8 @@ class FractalGeneratorUI(QMainWindow):
             self.complex_group.setVisible(True)
             if fractal_type == "Julia Set":
                 self.julia_group.setVisible(True)
+        elif fractal_type == "Koch Snowflake":
+            self.geometric_group.setVisible(True)
         
         self.display_group.setVisible(True)
     
@@ -477,6 +504,12 @@ class FractalGeneratorUI(QMainWindow):
                     'c_real': self.c_real.value(),
                     'c_imag': self.c_imag.value()
                 })
+        elif fractal_type == "Koch Snowflake":  # ADD THIS SECTION
+            params.update({
+                'depth': self.depth.value(),
+                'size': self.size.value(),
+                'line_width': self.line_width.value()
+            })
         
         return params
     
