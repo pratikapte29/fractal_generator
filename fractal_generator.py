@@ -52,6 +52,12 @@ class FractalGenerator:
         self.generators = {
             'Mandelbrot Set': MandelbrotGenerator(),
             'Julia Set': JuliaGenerator(),
+            "Koch Snowflake": KochGenerator(),
+            "Sierpinski": SierpinskiGenerator(),
+            "Dragon Curve": DragonGenerator(),
+            "Barnsley Fern": BarnsleyFernGenerator(),
+            "Newton": NewtonGenerator(),
+            "Burning Ship": BurningShipGenerator(),
             'Test Pattern': TestPatternGenerator()
         }
     
@@ -206,6 +212,12 @@ class FractalGeneratorUI(QMainWindow):
             "Select Fractal Type...",
             "Mandelbrot Set",
             "Julia Set",
+            "Koch Snowflake",
+            "Sierpinski",
+            "Dragon Curve",
+            "Barnsley Fern",
+            "Newton",
+            "Burning Ship",
             "Test Pattern"
         ])
         selection_layout.addWidget(self.fractal_combo)
