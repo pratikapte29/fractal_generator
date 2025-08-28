@@ -335,6 +335,23 @@ class FractalGeneratorUI(QMainWindow):
         self.line_width.setRange(1, 5)
         self.line_width.setValue(1)
         geometric_layout.addWidget(self.line_width, 1, 1, 1, 3)
+
+        # Special parameters (for Sierpinski and other special fractals)
+        self.special_group = QGroupBox("Special Parameters")
+        special_layout = QGridLayout(self.special_group)
+
+        # Method selection for Sierpinski
+        special_layout.addWidget(QLabel("Method:"), 0, 0)
+        self.sierpinski_method = QComboBox()
+        self.sierpinski_method.addItems(["recursive", "chaos_game"])
+        special_layout.addWidget(self.sierpinski_method, 0, 1)
+
+        # Number of points for chaos game
+        special_layout.addWidget(QLabel("Points:"), 0, 2)
+        self.num_points = QSpinBox()
+        self.num_points.setRange(1000, 100000)
+        self.num_points.setValue(50000)
+        special_layout.addWidget(self.num_points, 0, 3)
         
         # Display settings
         self.display_group = QGroupBox("Display Settings")
@@ -361,6 +378,7 @@ class FractalGeneratorUI(QMainWindow):
         layout.addWidget(self.complex_group)
         layout.addWidget(self.julia_group)
         layout.addWidget(self.geometric_group)
+        layout.addWidget(self.special_group)
         layout.addWidget(self.display_group)
         
         # Initially hide parameter groups
@@ -430,6 +448,7 @@ class FractalGeneratorUI(QMainWindow):
         self.complex_group.setVisible(False)
         self.julia_group.setVisible(False)
         self.geometric_group.setVisible(False)
+        self.special_group.setVisible(False)
         self.display_group.setVisible(True)  # Always show display
     
     def show_parameters_for_fractal(self, fractal_type):
@@ -440,9 +459,11 @@ class FractalGeneratorUI(QMainWindow):
             self.complex_group.setVisible(True)
             if fractal_type == "Julia Set":
                 self.julia_group.setVisible(True)
-        elif fractal_type == "Koch Snowflake":
+        elif fractal_type in ["Koch Snowflake", "Sierpinski Triangle"]:
             self.geometric_group.setVisible(True)
-        
+            if fractal_type == "Sierpinski Triangle":
+                self.special_group.setVisible(True)
+    
         self.display_group.setVisible(True)
     
     def connect_signals(self):
@@ -504,14 +525,20 @@ class FractalGeneratorUI(QMainWindow):
                     'c_real': self.c_real.value(),
                     'c_imag': self.c_imag.value()
                 })
-        elif fractal_type == "Koch Snowflake":  # ADD THIS SECTION
+        elif fractal_type in ["Koch Snowflake", "Sierpinski"]:
             params.update({
                 'depth': self.depth.value(),
                 'size': self.size.value(),
                 'line_width': self.line_width.value()
             })
-        
-        return params
+            
+            if fractal_type == "Sierpinski":
+                params.update({
+                    'method': self.sierpinski_method.currentText(),
+                    'num_points': self.num_points.value()
+                })
+                
+                return params
     
     @pyqtSlot(np.ndarray, np.ndarray)
     def on_generation_complete(self, colored_image, raw_data):
@@ -559,6 +586,9 @@ class FractalGeneratorUI(QMainWindow):
         self.width.setValue(600)
         self.height.setValue(400)
         self.color_scheme.setCurrentIndex(0)
+
+        self.sierpinski_method.setCurrentIndex(0)  # recursive
+        self.num_points.setValue(50000)
     
     def on_save_clicked(self):
         """Save fractal image"""
